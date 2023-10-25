@@ -101,8 +101,18 @@ const Home = () => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         const locationsByUser = groupLocationsByUser(data);
-        setUserLocations(locationsByUser);
-        fitToMarkers(locationsByUser);
+
+        // Filter locations for the current date
+        const filteredLocations = locationsByUser.map((userLocations) =>
+          userLocations.filter(
+            (location) => location.date === currentFormattedDate
+          )
+        );
+
+        // Update the state with filtered locations
+        setUserLocations(filteredLocations);
+
+        fitToMarkers(filteredLocations);
       } else {
         console.log("No data found in usersLocation");
       }
@@ -148,7 +158,7 @@ const Home = () => {
         provider={PROVIDER_GOOGLE}
         style={HomeStyle.map}
         ref={mapViewRef}
-        >        
+      >
         {userLocations.map((locations, userIndex) => (
           <React.Fragment key={userIndex}>
             {/* {console.log("Location UID:", locations.map((location)=>location.uid))}
@@ -175,10 +185,10 @@ const Home = () => {
                         longitude: locations[index - 1].longitude,
                       },
                     ]}
-                    strokeColor={ "blue"}
+                    strokeColor={"blue"}
                     strokeWidth={5}
                   />
-                  )}
+                )}
               </React.Fragment>
             ))}
           </React.Fragment>
@@ -192,10 +202,10 @@ const Home = () => {
       </View>
       {showWhiteBorder && (
         <View style={HomeStyle.whiteBorder}>
-         <Image
-        source={image ? { uri: image } : require('../assets/OIP.png')}
-        style={HomeStyle.imageStyle}
-      />
+          <Image
+            source={image ? { uri: image } : require("../assets/OIP.png")}
+            style={HomeStyle.imageStyle}
+          />
           <View>
             <Text style={HomeStyle.textStyle}>Name: {name}</Text>
             <Text style={HomeStyle.textStyle}>Email: {email}</Text>
